@@ -14,7 +14,6 @@ contract LowbMaticWallet {
   
   mapping (address => uint) public balanceOf;
   mapping (address => bool) public isAwardAddress;
-  mapping (address => mapping (address => bool)) public isApprovededAddress;
   
   event Deposit(address indexed user, uint amount);
   event Withdraw(address indexed user, uint amount);
@@ -46,10 +45,6 @@ contract LowbMaticWallet {
     emit Withdraw(msg.sender, amount);
   }
   
-  function approve(address addr, bool b) public {
-    isApprovededAddress[msg.sender][addr] = b;
-  }
-  
   function approveAward(address addr, bool b) public {
     require(msg.sender == owner, "You are not admin");
     isAwardAddress[addr] = b;
@@ -61,8 +56,8 @@ contract LowbMaticWallet {
   }
   
   function use(address user, uint amount) public {
-    require(isApprovededAddress[user][msg.sender], "you are not approved to use this user's lowb");  
-    require(amount <= balanceOf[msg.sender], "amount larger than the balance");  
+    require(isAwardAddress[msg.sender], "you are not approved to use this user's lowb");  
+    require(amount <= balanceOf[user], "amount larger than the balance");  
     balanceOf[user] -= amount;
     
     emit Use(msg.sender, user, amount);
